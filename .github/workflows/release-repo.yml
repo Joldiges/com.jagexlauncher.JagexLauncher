@@ -44,6 +44,7 @@ jobs:
       - name: Build Flatpak
         run: |
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          mkdir ./repo
           ./build.sh
       - name: Push Flatpak repository
         run: |
