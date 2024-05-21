@@ -37,6 +37,19 @@ add-extensions:
     download-if: active-gl-driver
     enable-if: active-gl-driver
 modules:
+  - name: proxychains
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/haad/proxychains
+        commit: 2ec9e1d7ca7e7d37f8eb67181e2c6580a7fdf3d0
+  - name: jagex-launcher
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 proxychains.conf /app/etc/proxychains.conf
+    sources:
+      - type: file
+        path: proxychains.conf
   - name: libnotify
     buildsystem: meson
     config-opts:
@@ -100,7 +113,7 @@ modules:
           - 
               #!/bin/bash
           - set -x
-          - /app/jre/bin/java -Duser.home="$XDG_DATA_HOME/user_home" -jar /app/RuneLite.jar
+          - proxychains4 /app/jre/bin/java -Duser.home="$XDG_DATA_HOME/user_home" -jar /app/RuneLite.jar
             -J-Duser.home="$XDG_DATA_HOME/user_home"
   - name: hdos-jar
     buildsystem: simple
