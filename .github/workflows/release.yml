@@ -39,8 +39,11 @@ jobs:
             icoutils
       - name: Build the flatpak bundle
         run: |
-          chmod +x build.sh
-          ./build.sh
+          flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+          cd icons
+          ./extract_icons.sh
+          cd ..
+          flatpak-builder --install-deps-from=flathub --user --install --force-clean build-dir --disable-cache "$(basename $(git rev-parse --show-toplevel)).yml"
           flatpak build-bundle ~/.local/share/flatpak/repo ${{ steps.variables.outputs.APP_NAME }}.flatpak ${{ steps.variables.outputs.APP_NAME }}
           sha256sum ${{ steps.variables.outputs.APP_NAME }}.flatpak > ${{ steps.variables.outputs.APP_NAME }}.flatpak.sha256sum
       - name: Tag this branch with incremented release version
@@ -55,3 +58,4 @@ jobs:
             ${{ steps.variables.outputs.APP_NAME }}.flatpak
             ${{ steps.variables.outputs.APP_NAME }}.flatpak.sha256sum
           tag_name: ${{ steps.variables.outputs.NEW_TAG }}
+          prerelease: true
